@@ -1,0 +1,59 @@
+class Checkup:
+  '''Checkup class for VetBase.db'''
+  #Long winded info return, no really needed in my opinion
+  def getInfo(self,idnumber):
+    self.id=idnumber
+    conn=sqlite3.connect("VetBase.db")
+    c = conn.cursor()
+    c.execute('SELECT * FROM checkups WHERE id=?', (idnumber, ))
+    info=c.fetchone()
+    print("\nANIMAL INFO:\nType: "+str(info[1])+"\nName: "+str(info[2])+"\nAge: "+str(info[4])+"\nOwner Name: "+str(info[3])+"\nCheckup Reason: "+str(info[5]))
+    conn.close()
+
+  #Shorter, simpler info return. Better
+  def getInfoBrief(self,idnumber):
+    self.id=idnumber
+    conn=sqlite3.connect("VetBase.db")
+    c=conn.cursor()
+    c.execute('SELECT * FROM checkups WHERE id=?',(idnumber, ))
+    info=c.fetchone()
+    print("\n\tANIMAL INFO BRIEF:\nType: "+str(info[1])+"\nName: "+str(info[2])+"\nCheckup Reason: "+str(info[5]))
+    conn.close()
+
+  #Deletes a memeber of the Checkup class from the database
+  def discharge(self):
+     conn=sqlite3.connect("VetBase.db")
+     c = conn.cursor()
+     sure=str(input("Are you sure to discharge[Y/N]: "))
+     if sure in ["Y", "y"]:
+        c.execute("delete from checkups WHERE id=?", self.id)
+        conn.commit()
+        print("The animal was discharged.")
+     else:
+        print("The discharge was stopped.")
+        conn.close()
+
+  #All the setter methods for the initialization of the checkup class
+  def setSpecies(self,speciesOfAnimal):
+    self.species=speciesOfAnimal
+
+  def setName(self,nameOfAnimal):
+    self.name=nameOfAnimal
+  
+  def setAge(self,ageOfAnimal):
+    self.age=ageOfAnimal
+
+  def setOwner(self,ownerOfAnimal):
+    self.owner=ownerOfAnimal
+
+  def setCheckupReason(self,checkupReasonOfAnimal):
+    self.checkupReason=checkupReasonOfAnimal
+
+  #saves the instance of the Checkup class to the Database
+  def saveToDB(self):
+    conn=sqlite3.connect("VetBase.db")
+    c = conn.cursor()
+    c.execute('insert into checkups(species,name,owner,age,checkupReason) values(?,?,?,?,?)', [self.species,self.name,self.owner,self.age,self.checkupReason])
+    conn.commit()
+    return c.lastrowid
+    conn.close()
