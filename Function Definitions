@@ -1,0 +1,83 @@
+import sqlite3
+
+#Prepares the database that will be used with the Checkup class
+def prepareVetBase():
+  try:
+    conn=sqlite3.connect("VetBase.db")
+    cursor=conn.cursor()
+    print("Database Connection is successful.")
+    cursor.execute('''CREATE TABLE IF NOT EXISTS checkups
+           (id INTEGER PRIMARY KEY AUTOINCREMENT,
+           species TEXT NOT NULL,
+           name TEXT NOT NULL,
+           owner TEXT NOT NULL,
+           age INTEGER NOT NULL,
+           checkupReason TEXT);''')
+    print("Checking is okay.\n---\n")
+    conn.commit()
+    conn.close()
+  except:
+      print("Hata")
+      raise
+
+#Prompts the user to choose what they want to do
+def proccessChoosing():
+  choosing = True
+  while choosing:
+    print("\nPLEASE MAKE A CHOICE:")
+    print("[1] New Animal check-in\n[2] Check Animal Status\n[3] Discharge Animal\n[4] Exit System")
+    try:
+          choice = int(input("YOUR CHOICE: "))
+          if choice > 0 and choice < 5:
+            choosing = False
+            return choice
+          else:
+            raise ValueError()
+    except:
+        print("Please, just type a number from 1 to 4.")
+
+#Once choice has been verifed by processChoosing this function calls the corresponding process
+def whichOne(choice):
+  if choice==1:
+    newCheckup()
+  elif choice==2:
+    checkupStatus()
+  elif choice==3:
+    dischargeCheckup()
+
+#Corresponds to choice=1, creates a new checkup class
+def newCheckup():
+  aCheckup=Checkup()
+  species=["Cat","Dog","Parrot"]
+  speciesRaw = int(input("What species is the animal?:\n[1]Cat\n[2]Dog\n[3]Parrot\nYOUR CHIOCE: "))
+  while (speciesRaw<1 or speciesRaw>3):
+    speciesRaw = int(input("What species is the animal?:\n[1]Cat\n[2]Dog\n[3]Parrot\nYOUR CHIOCE: "))
+  aCheckup.setSpecies(species[speciesRaw-1])
+
+  nameRaw = input("Input Pet name: ")
+  aCheckup.setName(nameRaw)
+
+  ageRaw = input("Pets age: ")
+  aCheckup.setAge(ageRaw)
+    
+  ownerRaw = str(input("Owner name(Daly, Ryan etc.): "))
+  aCheckup.setOwner(ownerRaw)
+
+  checkupReason = input("Checkup reason(General checkup/specific injury): ")
+  aCheckup.setCheckupReason(checkupReason)
+
+  idNumber=aCheckup.saveToDB()
+  print("\n\tCheck up ID Number: %s, please note for other proceess like discharge.\t" % str(idNumber))
+
+#Corresponds to choice=2, checks the info on a certain checkup
+def checkupStatus():
+  idRaw=input("Please type ID number: ")
+  aCheckup=Checkup()
+  print(aCheckup.getInfo(idRaw))
+
+#corresponds to choice=3, discharges an animal from the check up class
+def dischargeCheckup():
+    idRaw=input("Please type ID number: ")
+    aCheckup=Checkup()
+    aCheckup.getInfo(idRaw)
+    aCheckup.discharge()
