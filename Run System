@@ -1,0 +1,20 @@
+import datetime
+
+prepareVetBase()
+
+currentDT=datetime.datetime.now().strftime("%d-%m-%Y")
+print ("Today: %s\n" % str(currentDT))
+
+running = True
+while running:
+  choice=proccessChoosing()
+  if choice == 4:
+    print("""
+  -----------------------------------------------------
+        Thank you for using BoshTech Systems
+  -----------------------------------------------------
+
+                SYSTEM EXITED""")
+    running = False
+  else:
+    whichOne(choice)
